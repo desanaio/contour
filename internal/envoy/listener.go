@@ -178,6 +178,9 @@ func (b *httpConnectionManagerBuilder) DefaultFilters() *httpConnectionManagerBu
 			Name: wellknown.GRPCWeb,
 		},
 		&http.HttpFilter{
+			Name: wellknown.CORS,
+		},
+		&http.HttpFilter{
 			Name: wellknown.Router,
 		},
 	)

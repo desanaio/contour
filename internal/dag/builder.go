@@ -28,6 +28,7 @@ import (
 	projcontour "github.com/projectcontour/contour/apis/projectcontour/v1"
 	"github.com/projectcontour/contour/internal/annotation"
 	"github.com/projectcontour/contour/internal/k8s"
+	"k8s.io/api/extensions/v1beta1"
 )
 
 // Builder builds a DAG.
@@ -675,6 +676,7 @@ func (b *Builder) computeRoutes(sw *ObjectStatusWriter, proxy *projcontour.HTTPP
 			HTTPSUpgrade:          routeEnforceTLS(enforceTLS, route.PermitInsecure && !b.DisablePermitInsecure),
 			TimeoutPolicy:         timeoutPolicy(route.TimeoutPolicy),
 			RetryPolicy:           retryPolicy(route.RetryPolicy),
+			CorsPolicy:            corspolicy(route.CorsPolicy),
 			RequestHeadersPolicy:  reqHP,
 			ResponseHeadersPolicy: respHP,
 		}
@@ -1201,4 +1203,20 @@ func matchesPathPrefix(path, prefix string) bool {
 		path += "/"
 	}
 	return strings.HasPrefix(path, prefix)
+}
+
+// corspolicy computes the cors policy for the supplied annotations list.
+func corspolicy(policy *ingressroutev1.CorsPolicy) *CorsPolicy {
+	if policy == nil {
+		return nil
+	}
+
+	return &CorsPolicy{
+		AllowMethods:     policy.AllowMethods,
+		AllowHeaders:     policy.AllowHeaders,
+		ExposeHeaders:    policy.ExposeHeaders,
+		MaxAge:           policy.MaxAge,
+		AllowOrigin:      policy.AllowOrigin,
+		AllowCredentials: policy.AllowCredentials,
+	}
 }

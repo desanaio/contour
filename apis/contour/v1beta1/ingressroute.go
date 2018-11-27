@@ -86,6 +86,8 @@ type Route struct {
 	// The retry policy for this route
 	// +optional
 	RetryPolicy *projcontour.RetryPolicy `json:"retryPolicy,omitempty"`
+	// CorsPolicy defines the CORS policy.
+	CorsPolicy *CorsPolicy `json:"cors"`
 }
 
 // TimeoutPolicy define the attributes associated with timeout
@@ -160,6 +162,22 @@ type Delegate struct {
 	// Namespace of the IngressRoute. Defaults to the current namespace if not supplied.
 	// +optional
 	Namespace string `json:"namespace,omitempty"`
+}
+
+// CorsPolicy defines a CORS policy.
+type CorsPolicy struct {
+	// Specifies the origins that will be allowed to do CORS requests.
+	AllowOrigin []string `json:"allowOrigin"`
+	// Specifies the content for the *access-control-allow-methods* header.
+	AllowMethods []string `json:"allowMethods"`
+	// Specifies the content for the *access-control-allow-headers* header.
+	AllowHeaders []string `json:"allowHeaders"`
+	// Specifies the content for the *access-control-expose-headers* header.
+	ExposeHeaders []string `json:"exposeHeaders"`
+	// Specifies the content for the *access-control-max-age* header.
+	MaxAge int `json:"maxAge"`
+	// Specifies whether the resource allows credentials.
+	AllowCredentials bool `json:"allowCredentials"`
 }
 
 // +genclient

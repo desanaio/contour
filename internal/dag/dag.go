@@ -128,6 +128,9 @@ type Route struct {
 
 	// ResponseHeadersPolicy defines how headers are managed during forwarding
 	ResponseHeadersPolicy *HeadersPolicy
+
+	// CorsPolicy specifies the CORS policy.
+	CorsPolicy *CorsPolicy
 }
 
 // HasPathPrefix returns whether this route has a PrefixPathCondition.
@@ -227,6 +230,27 @@ func (r *Route) Visit(f func(Vertex)) {
 	if r.MirrorPolicy != nil && r.MirrorPolicy.Cluster != nil {
 		f(r.MirrorPolicy.Cluster)
 	}
+}
+
+// CorsPolicy defines a CORS policy.
+type CorsPolicy struct {
+	// Specifies the origins that will be allowed to do CORS requests.
+	AllowOrigin []string
+
+	// Specifies the content for the *access-control-allow-methods* header.
+	AllowMethods []string
+
+	// Specifies the content for the *access-control-allow-headers* header.
+	AllowHeaders []string
+
+	// Specifies the content for the *access-control-expose-headers* header.
+	ExposeHeaders []string
+
+	// Specifies the content for the *access-control-max-age* header.
+	MaxAge int
+
+	// Specifies whether the resource allows credentials.
+	AllowCredentials bool
 }
 
 // A VirtualHost represents a named L4/L7 service.

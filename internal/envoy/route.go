@@ -17,11 +17,14 @@ import (
 	"fmt"
 	"regexp"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	v2 "github.com/envoyproxy/go-control-plane/envoy/api/v2"
 	envoy_api_v2_core "github.com/envoyproxy/go-control-plane/envoy/api/v2/core"
 	envoy_api_v2_route "github.com/envoyproxy/go-control-plane/envoy/api/v2/route"
+	"github.com/gogo/protobuf/types"
 	"github.com/golang/protobuf/ptypes/duration"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/projectcontour/contour/internal/dag"
@@ -64,6 +67,7 @@ func RouteRoute(r *dag.Route) *envoy_api_v2_route.Route_Route {
 		PrefixRewrite:         r.PrefixRewrite,
 		HashPolicy:            hashPolicy(r),
 		RequestMirrorPolicies: mirrorPolicy(r),
+		Cors:                  corspolicy(r.CorsPolicy),
 	}
 
 	// Check for host header policy and set if found
@@ -183,6 +187,22 @@ func retryPolicy(r *dag.Route) *envoy_api_v2_route.RetryPolicy {
 		rp.PerTryTimeout = protobuf.Duration(r.RetryPolicy.PerTryTimeout)
 	}
 	return rp
+}
+
+func corspolicy(policy *dag.CorsPolicy) *route.CorsPolicy {
+	if policy == nil {
+		return nil
+	}
+
+	return &route.CorsPolicy{
+		Enabled:          bv(true),
+		AllowOrigin:      policy.AllowOrigin,
+		AllowMethods:     strings.Join(policy.AllowMethods, ","),
+		AllowHeaders:     strings.Join(policy.AllowHeaders, ","),
+		ExposeHeaders:    strings.Join(policy.ExposeHeaders, ","),
+		MaxAge:           strconv.Itoa(policy.MaxAge),
+		AllowCredentials: bv(policy.AllowCredentials),
+	}
 }
 
 // UpgradeHTTPS returns a route Action that redirects the request to HTTPS.
@@ -355,4 +375,15 @@ func containsMatch(s string) *envoy_api_v2_route.HeaderMatcher_SafeRegexMatch {
 	return &envoy_api_v2_route.HeaderMatcher_SafeRegexMatch{
 		SafeRegexMatch: SafeRegexMatch(regex),
 	}
+}
+
+var bvTrue = types.BoolValue{Value: true}
+
+// bv returns a pointer to a true types.BoolValue if val is true,
+// otherwise it returns nil.
+func bv(val bool) *types.BoolValue {
+	if val {
+		return &bvTrue
+	}
+	return nil
 }
