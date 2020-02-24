@@ -28,7 +28,6 @@ import (
 	projcontour "github.com/projectcontour/contour/apis/projectcontour/v1"
 	"github.com/projectcontour/contour/internal/annotation"
 	"github.com/projectcontour/contour/internal/k8s"
-	"k8s.io/api/extensions/v1beta1"
 )
 
 // Builder builds a DAG.

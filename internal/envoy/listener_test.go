@@ -336,6 +336,8 @@ func TestHTTPConnectionManager(t *testing.T) {
 						}, {
 							Name: wellknown.GRPCWeb,
 						}, {
+							Name: wellknown.CORS,
+						}, {
 							Name: wellknown.Router,
 						}},
 						HttpProtocolOptions: &envoy_api_v2_core.Http1ProtocolOptions{
@@ -388,6 +390,8 @@ func TestHTTPConnectionManager(t *testing.T) {
 							Name: wellknown.Gzip,
 						}, {
 							Name: wellknown.GRPCWeb,
+						}, {
+							Name: wellknown.CORS,
 						}, {
 							Name: wellknown.Router,
 						}},

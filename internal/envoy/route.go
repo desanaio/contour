@@ -24,7 +24,6 @@ import (
 	v2 "github.com/envoyproxy/go-control-plane/envoy/api/v2"
 	envoy_api_v2_core "github.com/envoyproxy/go-control-plane/envoy/api/v2/core"
 	envoy_api_v2_route "github.com/envoyproxy/go-control-plane/envoy/api/v2/route"
-	"github.com/gogo/protobuf/types"
 	"github.com/golang/protobuf/ptypes/duration"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/projectcontour/contour/internal/dag"
@@ -189,13 +188,12 @@ func retryPolicy(r *dag.Route) *envoy_api_v2_route.RetryPolicy {
 	return rp
 }
 
-func corspolicy(policy *dag.CorsPolicy) *route.CorsPolicy {
+func corspolicy(policy *dag.CorsPolicy) *envoy_api_v2_route.CorsPolicy {
 	if policy == nil {
 		return nil
 	}
 
-	return &route.CorsPolicy{
-		Enabled:          bv(true),
+	return &envoy_api_v2_route.CorsPolicy{
 		AllowOrigin:      policy.AllowOrigin,
 		AllowMethods:     strings.Join(policy.AllowMethods, ","),
 		AllowHeaders:     strings.Join(policy.AllowHeaders, ","),
@@ -377,11 +375,11 @@ func containsMatch(s string) *envoy_api_v2_route.HeaderMatcher_SafeRegexMatch {
 	}
 }
 
-var bvTrue = types.BoolValue{Value: true}
+var bvTrue = wrappers.BoolValue{Value: true}
 
 // bv returns a pointer to a true types.BoolValue if val is true,
 // otherwise it returns nil.
-func bv(val bool) *types.BoolValue {
+func bv(val bool) *wrappers.BoolValue {
 	if val {
 		return &bvTrue
 	}
