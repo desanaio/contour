@@ -1211,11 +1211,11 @@ func corspolicy(policy *ingressroutev1.CorsPolicy) *CorsPolicy {
 	}
 
 	return &CorsPolicy{
-		AllowMethods:     policy.AllowMethods,
-		AllowHeaders:     policy.AllowHeaders,
-		ExposeHeaders:    policy.ExposeHeaders,
-		MaxAge:           policy.MaxAge,
-		AllowOrigin:      policy.AllowOrigin,
-		AllowCredentials: policy.AllowCredentials,
+		AllowMethods:     			policy.AllowMethods,
+		AllowHeaders:     			policy.AllowHeaders,
+		ExposeHeaders:    			policy.ExposeHeaders,
+		MaxAge:           			policy.MaxAge,
+		AllowOriginStringMatch: policy.AllowOriginStringMatch,
+		AllowCredentials: 			policy.AllowCredentials,
 	}
 }

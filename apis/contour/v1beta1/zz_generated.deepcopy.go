@@ -21,6 +21,7 @@ limitations under the License.
 package v1beta1
 
 import (
+	envoy_type_matcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher"
 	"github.com/projectcontour/contour/apis/projectcontour/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -37,9 +38,9 @@ func (in *CertificateDelegation) DeepCopyInto(out *CertificateDelegation) {
 
 func (in *CorsPolicy) DeepCopyInto(out *CorsPolicy) {
 	*out = *in
-	if in.AllowOrigin != nil {
-		in, out := &in.AllowOrigin, &out.AllowOrigin
-		*out = make([]string, len(*in))
+	if in.AllowOriginStringMatch != nil {
+		in, out := &in.AllowOriginStringMatch, &out.AllowOriginStringMatch
+		*out = make([]*envoy_type_matcher.StringMatcher, len(*in))
 		copy(*out, *in)
 	}
 	if in.AllowMethods != nil {

@@ -23,6 +23,7 @@ import (
 
 	v2 "github.com/envoyproxy/go-control-plane/envoy/api/v2"
 	envoy_api_v2_core "github.com/envoyproxy/go-control-plane/envoy/api/v2/core"
+	envoy_type "github.com/envoyproxy/go-control-plane/envoy/type"
 	envoy_api_v2_route "github.com/envoyproxy/go-control-plane/envoy/api/v2/route"
 	"github.com/golang/protobuf/ptypes/duration"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
@@ -64,9 +65,9 @@ func RouteRoute(r *dag.Route) *envoy_api_v2_route.Route_Route {
 		Timeout:               responseTimeout(r),
 		IdleTimeout:           idleTimeout(r),
 		PrefixRewrite:         r.PrefixRewrite,
+		Cors:                  corspolicy(r.CorsPolicy),
 		HashPolicy:            hashPolicy(r),
 		RequestMirrorPolicies: mirrorPolicy(r),
-		Cors:                  corspolicy(r.CorsPolicy),
 	}
 
 	// Check for host header policy and set if found
@@ -194,12 +195,21 @@ func corspolicy(policy *dag.CorsPolicy) *envoy_api_v2_route.CorsPolicy {
 	}
 
 	return &envoy_api_v2_route.CorsPolicy{
-		AllowOrigin:      policy.AllowOrigin,
-		AllowMethods:     strings.Join(policy.AllowMethods, ","),
-		AllowHeaders:     strings.Join(policy.AllowHeaders, ","),
-		ExposeHeaders:    strings.Join(policy.ExposeHeaders, ","),
-		MaxAge:           strconv.Itoa(policy.MaxAge),
-		AllowCredentials: bv(policy.AllowCredentials),
+		AllowOriginStringMatch: policy.AllowOriginStringMatch,
+		AllowMethods:     			strings.Join(policy.AllowMethods, ","),
+		AllowHeaders:     			strings.Join(policy.AllowHeaders, ","),
+		ExposeHeaders:    			strings.Join(policy.ExposeHeaders, ","),
+		MaxAge:           			strconv.Itoa(policy.MaxAge),
+		AllowCredentials: 			bv(policy.AllowCredentials),
+		EnabledSpecifier:				&envoy_api_v2_route.CorsPolicy_FilterEnabled{
+			FilterEnabled: &envoy_api_v2_core.RuntimeFractionalPercent{
+				DefaultValue: &envoy_type.FractionalPercent{
+					Numerator: 100,
+					Denominator: envoy_type.FractionalPercent_HUNDRED,
+				},
+				RuntimeKey: "cors.www.enabled",
+			},
+		},
 	}
 }
 

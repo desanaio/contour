@@ -24,6 +24,8 @@ import (
 	envoy_api_v2_auth "github.com/envoyproxy/go-control-plane/envoy/api/v2/auth"
 	"github.com/projectcontour/contour/internal/k8s"
 	v1 "k8s.io/api/core/v1"
+
+	envoy_type_matcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher"
 )
 
 // A DAG represents a directed acylic graph of objects representing the relationship
@@ -235,7 +237,7 @@ func (r *Route) Visit(f func(Vertex)) {
 // CorsPolicy defines a CORS policy.
 type CorsPolicy struct {
 	// Specifies the origins that will be allowed to do CORS requests.
-	AllowOrigin []string
+	AllowOriginStringMatch []*envoy_type_matcher.StringMatcher
 
 	// Specifies the content for the *access-control-allow-methods* header.
 	AllowMethods []string

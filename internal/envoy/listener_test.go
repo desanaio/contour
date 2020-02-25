@@ -334,9 +334,9 @@ func TestHTTPConnectionManager(t *testing.T) {
 						HttpFilters: []*http.HttpFilter{{
 							Name: wellknown.Gzip,
 						}, {
-							Name: wellknown.GRPCWeb,
-						}, {
 							Name: wellknown.CORS,
+						}, {
+							Name: wellknown.GRPCWeb,
 						}, {
 							Name: wellknown.Router,
 						}},
@@ -389,9 +389,9 @@ func TestHTTPConnectionManager(t *testing.T) {
 						HttpFilters: []*http.HttpFilter{{
 							Name: wellknown.Gzip,
 						}, {
-							Name: wellknown.GRPCWeb,
-						}, {
 							Name: wellknown.CORS,
+						}, {
+							Name: wellknown.GRPCWeb,
 						}, {
 							Name: wellknown.Router,
 						}},
