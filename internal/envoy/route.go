@@ -25,6 +25,7 @@ import (
 	envoy_api_v2_core "github.com/envoyproxy/go-control-plane/envoy/api/v2/core"
 	envoy_type "github.com/envoyproxy/go-control-plane/envoy/type"
 	envoy_api_v2_route "github.com/envoyproxy/go-control-plane/envoy/api/v2/route"
+	envoy_type_matcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher"
 	"github.com/golang/protobuf/ptypes/duration"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/projectcontour/contour/internal/dag"
@@ -194,8 +195,35 @@ func corspolicy(policy *dag.CorsPolicy) *envoy_api_v2_route.CorsPolicy {
 		return nil
 	}
 
+	var allowOrigins []*envoy_type_matcher.StringMatcher
+
+	if policy.AllowOriginStringMatch != nil {
+		for _, o := range policy.AllowOriginStringMatch {
+			stringMatcher := &envoy_type_matcher.StringMatcher{}
+
+			if o.Exact != "" {
+				stringMatcher.MatchPattern = &envoy_type_matcher.StringMatcher_Exact{o.Exact}
+			} else if o.Prefix != "" {
+				stringMatcher.MatchPattern = &envoy_type_matcher.StringMatcher_Prefix{o.Prefix}
+			} else if o.Suffix != "" {
+				stringMatcher.MatchPattern = &envoy_type_matcher.StringMatcher_Suffix{o.Suffix}
+			} else if o.Regex != "" {
+				stringMatcher.MatchPattern = &envoy_type_matcher.StringMatcher_Regex{o.Regex}
+			} else if o.SafeRegex.EngineType != "" && o.SafeRegex.Regex != "" {
+				stringMatcher.MatchPattern = &envoy_type_matcher.StringMatcher_SafeRegex{
+					&envoy_type_matcher.RegexMatcher{
+						EngineType: &envoy_type_matcher.RegexMatcher_GoogleRe2{},
+						Regex: o.SafeRegex.Regex,
+					},
+				}
+			}
+
+			allowOrigins = append(allowOrigins, stringMatcher)
+		}
+	}
+
 	return &envoy_api_v2_route.CorsPolicy{
-		AllowOriginStringMatch: policy.AllowOriginStringMatch,
+		AllowOriginStringMatch: allowOrigins,
 		AllowMethods:     			strings.Join(policy.AllowMethods, ","),
 		AllowHeaders:     			strings.Join(policy.AllowHeaders, ","),
 		ExposeHeaders:    			strings.Join(policy.ExposeHeaders, ","),

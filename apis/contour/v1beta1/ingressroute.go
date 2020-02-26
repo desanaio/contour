@@ -16,7 +16,6 @@ package v1beta1
 import (
 	projcontour "github.com/projectcontour/contour/apis/projectcontour/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	envoy_type_matcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher"
 )
 
 // IngressRouteSpec defines the spec of the CRD
@@ -87,8 +86,6 @@ type Route struct {
 	// The retry policy for this route
 	// +optional
 	RetryPolicy *projcontour.RetryPolicy `json:"retryPolicy,omitempty"`
-	// CorsPolicy defines the CORS policy.
-	CorsPolicy *CorsPolicy `json:"cors"`
 }
 
 // TimeoutPolicy define the attributes associated with timeout
@@ -163,22 +160,6 @@ type Delegate struct {
 	// Namespace of the IngressRoute. Defaults to the current namespace if not supplied.
 	// +optional
 	Namespace string `json:"namespace,omitempty"`
-}
-
-// CorsPolicy defines a CORS policy.
-type CorsPolicy struct {
-	// Specifies the origins that will be allowed to do CORS requests.
-	AllowOriginStringMatch []*envoy_type_matcher.StringMatcher `json:"allowOriginStringMatch"`
-	// Specifies the content for the *access-control-allow-methods* header.
-	AllowMethods []string `json:"allowMethods"`
-	// Specifies the content for the *access-control-allow-headers* header.
-	AllowHeaders []string `json:"allowHeaders"`
-	// Specifies the content for the *access-control-expose-headers* header.
-	ExposeHeaders []string `json:"exposeHeaders"`
-	// Specifies the content for the *access-control-max-age* header.
-	MaxAge int `json:"maxAge"`
-	// Specifies whether the resource allows credentials.
-	AllowCredentials bool `json:"allowCredentials"`
 }
 
 // +genclient

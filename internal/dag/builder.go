@@ -20,6 +20,8 @@ import (
 	"strconv"
 	"strings"
 
+	"encoding/json"
+
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/api/networking/v1beta1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -1205,17 +1207,17 @@ func matchesPathPrefix(path, prefix string) bool {
 }
 
 // corspolicy computes the cors policy for the supplied annotations list.
-func corspolicy(policy *ingressroutev1.CorsPolicy) *CorsPolicy {
+func corspolicy(policy *projcontour.CorsPolicy) *CorsPolicy {
 	if policy == nil {
 		return nil
 	}
 
 	return &CorsPolicy{
-		AllowMethods:     			policy.AllowMethods,
-		AllowHeaders:     			policy.AllowHeaders,
-		ExposeHeaders:    			policy.ExposeHeaders,
-		MaxAge:           			policy.MaxAge,
 		AllowOriginStringMatch: policy.AllowOriginStringMatch,
-		AllowCredentials: 			policy.AllowCredentials,
+		AllowMethods:           policy.AllowMethods,
+		AllowHeaders:           policy.AllowHeaders,
+		ExposeHeaders:          policy.ExposeHeaders,
+		MaxAge:                 policy.MaxAge,
+		AllowCredentials:       policy.AllowCredentials,
 	}
 }

@@ -176,6 +176,8 @@ type Route struct {
 	// The policy for managing response headers during proxying
 	// +optional
 	ResponseHeadersPolicy *HeadersPolicy `json:"responseHeadersPolicy,omitempty"`
+	// CorsPolicy defines the CORS policy.
+	CorsPolicy *CorsPolicy `json:"cors"`
 }
 
 func (r *Route) GetPrefixReplacements() []ReplacePrefix {
@@ -456,4 +458,35 @@ type HTTPProxyList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata"`
 	Items           []HTTPProxy `json:"items"`
+}
+
+// CorsPolicy defines a CORS policy.
+type CorsPolicy struct {
+	// Specifies the origins that will be allowed to do CORS requests.
+	AllowOriginStringMatch []AllowOriginStringMatcher `json:"allowOriginStringMatch"`
+	// Specifies the content for the *access-control-allow-methods* header.
+	AllowMethods []string `json:"allowMethods"`
+	// Specifies the content for the *access-control-allow-headers* header.
+	AllowHeaders []string `json:"allowHeaders"`
+	// Specifies the content for the *access-control-expose-headers* header.
+	ExposeHeaders []string `json:"exposeHeaders"`
+	// Specifies the content for the *access-control-max-age* header.
+	MaxAge int `json:"maxAge"`
+	// Specifies whether the resource allows credentials.
+	AllowCredentials bool `json:"allowCredentials"`
+}
+
+// AllowOriginStringMatcher defines the type of matcher for the origin.
+type AllowOriginStringMatcher struct {
+	Exact string `json:"exact"`
+	Prefix string `json:"prefix"`
+	Suffix string `json:"suffix"`
+	Regex string `json:"regex"`
+	SafeRegex SafeRegex `json:"safeRegex"`
+}
+
+// SafeRegex is a regex using a specific engine.
+type SafeRegex struct {
+	EngineType string `json:"engineType"`
+	Regex string `json:"regex"`
 }

@@ -24,8 +24,7 @@ import (
 	envoy_api_v2_auth "github.com/envoyproxy/go-control-plane/envoy/api/v2/auth"
 	"github.com/projectcontour/contour/internal/k8s"
 	v1 "k8s.io/api/core/v1"
-
-	envoy_type_matcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher"
+	projcontour "github.com/projectcontour/contour/apis/projectcontour/v1"
 )
 
 // A DAG represents a directed acylic graph of objects representing the relationship
@@ -237,22 +236,17 @@ func (r *Route) Visit(f func(Vertex)) {
 // CorsPolicy defines a CORS policy.
 type CorsPolicy struct {
 	// Specifies the origins that will be allowed to do CORS requests.
-	AllowOriginStringMatch []*envoy_type_matcher.StringMatcher
-
+	AllowOriginStringMatch []projcontour.AllowOriginStringMatcher `json:"allowOriginStringMatch"`
 	// Specifies the content for the *access-control-allow-methods* header.
-	AllowMethods []string
-
+	AllowMethods []string `json:"allowMethods"`
 	// Specifies the content for the *access-control-allow-headers* header.
-	AllowHeaders []string
-
+	AllowHeaders []string `json:"allowHeaders"`
 	// Specifies the content for the *access-control-expose-headers* header.
-	ExposeHeaders []string
-
+	ExposeHeaders []string `json:"exposeHeaders"`
 	// Specifies the content for the *access-control-max-age* header.
-	MaxAge int
-
+	MaxAge int `json:"maxAge"`
 	// Specifies whether the resource allows credentials.
-	AllowCredentials bool
+	AllowCredentials bool `json:"allowCredentials"`
 }
 
 // A VirtualHost represents a named L4/L7 service.
