@@ -21,7 +21,6 @@ limitations under the License.
 package v1beta1
 
 import (
-	envoy_type_matcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher"
 	"github.com/projectcontour/contour/apis/projectcontour/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
